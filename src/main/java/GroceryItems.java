@@ -23,7 +23,7 @@ public class GroceryItems {
         this.name = name;
     }
 
-    public static String getPrice(){
+    public String getPrice(){
         return price;
     }
 

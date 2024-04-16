@@ -16,7 +16,7 @@ public class JerkSONParser {
     private String fieldPattern = "([\\w]+)([:@^*%!])([\\w\\.]+)";
     private String itemSplitPattern = "##";
 
-    private Pattern fieldPatternComiled = Pattern.compile(fieldPattern);
+    private Pattern fieldPatternCompiled = Pattern.compile(fieldPattern);
     private Pattern itemSplitter = Pattern.compile(itemSplitPattern);
 
     private ArrayList<GroceryItems> listOfGroceryItems = new ArrayList<GroceryItems>();
@@ -29,39 +29,53 @@ public class JerkSONParser {
         return errorCount;
     }
 
-    public String[] stringSplitting(String string) {
-        String[] splitStrings = string.split(stringSplitPattern);
-        return splitStrings;
+    public void parse(String input) {
+        String[] items = itemSplitter.split(input);
+        for (String item : items) {
+            try {
+                Matcher matcher = fieldPatternCompiled.matcher(item);
+                String name = "";
+                String price = "blank";
+                while (matcher.find()) {
+                    String key = matcher.group(1).toLowerCase();
+                    String separator = matcher.group(2);
+                    String value = matcher.group(3);
+                    if (key.equals("name")) {
+                        name = value;
+                    } else if (key.equals("price")) {
+                        price = value;
+                    }
+                }
+                listOfGroceryItems.add(new GroceryItems(name, price));
+            } catch (Exception e) {
+                errorCount++;
+            }
+        }
     }
 
-    public String itemCounter(String string) {
+    public String itemCounter(String itemName) {
         StringBuilder itemChart = new StringBuilder();
         LinkedHashMap<String, Integer> priceCounter = new LinkedHashMap<>();
-        int stringCount = 0;
+        int itemCount = 0;
+
         for (GroceryItems item : listOfGroceryItems) {
-            if (item.getName().equals(string)) {
-                stringCount++;
-                if (priceCounter.containsKey(GroceryItems.getPrice())) {
-                    priceCounter.put(GroceryItems.getPrice(), priceCounter.get(GroceryItems.getPrice()) + 1);
-                } else if (GroceryItems.getPrice().equals("blank")) {
-                    stringCount--;
-                } else {
-                    priceCounter.put(GroceryItems.getPrice(), 1);
-                }
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                itemCount++;
+                priceCounter.put(item.getPrice(), priceCounter.getOrDefault(item.getPrice(), 0) + 1);
             }
         }
 
-        itemChart.append("name:\t" + string + "\t\t" + "seen: " + stringCount + " times\n");
+        itemChart.append("name:\t").append(itemName).append("\t\tseen: ").append(itemCount).append(" times\n");
         itemChart.append("=============\t\t=============\n");
         int counter = 0;
+
         for (String key : priceCounter.keySet()) {
-            itemChart.append("Price:\t" + key + "\t\t" + "seen: " + priceCounter.get(key) + " times");
+            itemChart.append("Price:\t").append(key).append("\t\tseen: ").append(priceCounter.get(key)).append(" times\n");
             if (counter == 0) {
-                itemChart.append("\n-------------\t\t-------------\n");
+                itemChart.append("-------------\t\t-------------\n");
             }
             counter++;
         }
-
         return itemChart.toString();
     }
 }

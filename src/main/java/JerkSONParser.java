@@ -14,4 +14,16 @@ public class JerkSONParser {
     public int getErrorCount() {
         return errorCount;
     }
+
+    private String fieldPattern = "([A-Za-z0-9.]+)";
+    private String stringSplitPattern = "([;:^@%*!])";
+    private String itemSplitPattern = "((##))";
+
+    private Pattern fieldName = Pattern.compile(fieldPattern);
+    Pattern splitter = Pattern.compile(stringSplitPattern);
+    Pattern itemSplitter = Pattern.compile(itemSplitPattern);
+
+    
+
+
 }

@@ -13,22 +13,20 @@ public class JerkSONParser {
 
     private int errorCount = 0;
 
-    public int getErrorCount() {
-        return errorCount;
-    }
+    private String fieldPattern = "([\\w]+)([:@^*%!])([\\w\\.]+)";
+    private String itemSplitPattern = "##";
 
-    private String fieldPattern = "([A-Za-z0-9.]+)";
-    private String stringSplitPattern = "([;:^@%*!])";
-    private String itemSplitPattern = "((##))";
-
-    private Pattern fieldName = Pattern.compile(fieldPattern);
-    Pattern splitter = Pattern.compile(stringSplitPattern);
-    Pattern itemSplitter = Pattern.compile(itemSplitPattern);
+    private Pattern fieldPatternComiled = Pattern.compile(fieldPattern);
+    private Pattern itemSplitter = Pattern.compile(itemSplitPattern);
 
     private ArrayList<GroceryItems> listOfGroceryItems = new ArrayList<GroceryItems>();
 
     public ArrayList<GroceryItems> getListOfItems() {
         return listOfGroceryItems;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
     }
 
     public String[] stringSplitting(String string) {
@@ -51,6 +49,19 @@ public class JerkSONParser {
                     priceCounter.put(GroceryItems.getPrice(), 1);
                 }
             }
-            
         }
+
+        itemChart.append("name:\t" + string + "\t\t" + "seen: " + stringCount + " times\n");
+        itemChart.append("=============\t\t=============\n");
+        int counter = 0;
+        for (String key : priceCounter.keySet()) {
+            itemChart.append("Price:\t" + key + "\t\t" + "seen: " + priceCounter.get(key) + " times");
+            if (counter == 0) {
+                itemChart.append("\n-------------\t\t-------------\n");
+            }
+            counter++;
+        }
+
+        return itemChart.toString();
     }
+}

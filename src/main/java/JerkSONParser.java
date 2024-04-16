@@ -13,15 +13,15 @@ public class JerkSONParser {
 
     private int errorCount = 0;
 
-    private String fieldPattern = "([\\w]+)([:@^*%!])([\\w\\.]+)";
+    private String fieldPattern = "([\\w]+)([:@^*%!])([\\w\\.\\/]+)";
     private String itemSplitPattern = "##";
 
     private Pattern fieldPatternCompiled = Pattern.compile(fieldPattern);
     private Pattern itemSplitter = Pattern.compile(itemSplitPattern);
 
-    private ArrayList<GroceryItems> listOfGroceryItems = new ArrayList<GroceryItems>();
+    private ArrayList<GroceryItems> listOfGroceryItems = new ArrayList<>();
 
-    public ArrayList<GroceryItems> getListOfItems() {
+    public ArrayList<GroceryItems> getListOfGroceryItems() {
         return listOfGroceryItems;
     }
 
